@@ -1,4 +1,4 @@
-module github.com/flpgst/estudosGo/challenge01
+module github.com/flpgst/goexpert-challenge01
 
 go 1.20
 
