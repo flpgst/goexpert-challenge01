@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -44,7 +43,18 @@ func main() {
 
 func connectSqlite() *sql.DB {
 	os.Remove("./cotacao.db")
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Millisecond)
+	defer cancel()
 	db, err := sql.Open("sqlite3", "./cotacao.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	conn, err := db.Conn(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,7 +73,6 @@ func connectSqlite() *sql.DB {
 }
 
 func savePrice(price string) {
-	fmt.Println(price)
 	tx, err := db.Begin()
 	if err != nil {
 		log.Fatal(err)
